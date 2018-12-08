@@ -2,41 +2,36 @@ import React from 'react';
 //import workersListRender from './workersListRender.jsx';
 import $ from 'jquery';
 import Dropdown from 'react-drop-down'
+import {
+    Navbar,
+    Nav,
+    NavItem,
+    FormGroup,
+    FormControl,
+    Button,
+    Glyphicon,
+    DropdownButton,
+    MenuItem
+} from "react-bootstrap"; // For Designing
+
 
 class Sign extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      shown: false,
-      name: 'Unknown',
-      major: 'Plumber', //default value (changable)
+      name: 'Unknown',  //default value (changable)
+      major: 'Choose', //default value (changable)
       rating: 3, //default value (unchangable)
       email: 'Unkown@unkown.com',
-      username: 'Unkown',
-      password: 'Unkown',
-      description: 'Unkown',
-      availability: 'yes', //default value (unchangable)
+      username: 'Unkown',  //default value (changable)
+      password: 'Unkown',  //default value (changable)
+      description: 'Unkown',  //default value (changable)
+      availability: 'Yes', //default value (unchangable)
       phonenumber: 0 //default value (changable)
     };
   }
 
-  componentDidMount() {
-    $('.form').hide()
-    this.setState({
-      shown: false
-    })
-  }
-
-  handleOnClick() {
-    this.setState({
-      shown: !this.state.shown
-    })
-    if (!this.state.shown) {
-      $('.form').show()
-    } else {
-      $('.form').hide()
-    }
-  }
+//handle sign up inputs
 
   handleName(e) {
     this.setState({
@@ -45,14 +40,9 @@ class Sign extends React.Component {
   }
 
   handleMajor(e) {
+    var arr = ['Electrician', 'Plumber', 'Painter', 'Carpenter', 'Gardener', 'Furniture']
     this.setState({
-      major: e
-    })
-  }
-
-  handleRating(e) {
-    this.setState({
-      rating: e.target.value
+      major: arr[e]
     })
   }
 
@@ -86,6 +76,7 @@ class Sign extends React.Component {
     })
   }
 
+  //submit sign up
   handleSubmit() {
     $.ajax({
       type: 'POST',
@@ -102,11 +93,11 @@ class Sign extends React.Component {
         phonenumber: this.state.phonenumber
       },
       success: (data) => {
-        this.setState({
-          getItems: data
-        })
+        alert('signed up')
+        $('input').val(''); //inputs values will be empty
       },
       error: (err) => {
+        alert('username is already existed');
         console.log('err', err);
       }
     });
@@ -115,42 +106,43 @@ class Sign extends React.Component {
   render() {
     return (
       <div>
-        <h4 style={{cursor: 'pointer'}} onClick={this.handleOnClick.bind(this)}> Signup </h4>
-        <form className='form'>
+        <form style={{marginTop: '10px'}} className='form'>
           <label>
-            Name:
-            <br /><input type="text" onChange={this.handleName.bind(this)} />
+            <p style={{marginLeft: '60px'}}> Name: <input type="text" onChange={this.handleName.bind(this)} /> </p>
+          </label> <br />
+            <div style={{fontWeight: 'bold', marginLeft: '60px', marginBottom: '15px'}}> Major:
+            <DropdownButton style={{marginLeft: '8px'}}
+              title={this.state.major}
+              //key={i}
+              id={`major`}
+              onSelect={this.handleMajor.bind(this)}
+            > 
+              <MenuItem eventKey="0" active>Electrician</MenuItem>
+              <MenuItem eventKey="1">Plumber</MenuItem>
+              <MenuItem eventKey="2">Painter</MenuItem>
+              <MenuItem eventKey="3">Carpenter</MenuItem>
+              <MenuItem eventKey="4">Gardener</MenuItem>
+              <MenuItem eventKey="5">Furniture</MenuItem>
+
+            </DropdownButton>
+            </div> 
+          <label>
+            <p style={{marginLeft: '65px'}}> Email: <input type="email" onChange={this.handleEmail.bind(this)} /></p>
           </label> <br />
           <label>
-            Major: <br />
-            <Dropdown value={this.state.major}
-              onChange={this.handleMajor.bind(this)}
-              options={['Electrician', 'Plumber', 'Painter', 'Carpenter', 'Gardener', 'Furniture']} />
+            <p style={{marginLeft: '34px'}}> Username: <input type="text" onChange={this.handleUsername.bind(this)} /></p>
           </label> <br />
           <label>
-            Email:
-            <br /><input type="text" onChange={this.handleEmail.bind(this)} />
+            <p style={{marginLeft: '36px'}}> Password: <input type="password" onChange={this.handlePassword.bind(this)} /></p>
           </label> <br />
           <label>
-            Username:
-            <br /><input type="text" onChange={this.handleUsername.bind(this)} />
+            <p style={{marginLeft: '26px'}}> Description: <input type="text" onChange={this.handleDescription.bind(this)} /></p>
           </label> <br />
           <label>
-            Password:
-            <br /><input type="text" onChange={this.handlePassword.bind(this)} />
-          </label> <br />
-          <label>
-            Description:
-            <br /><input type="text" onChange={this.handleDescription.bind(this)} />
-          </label> <br />
-          <label>
-            Phonenumber:
-            <br /><input type="text" onChange={this.handlePhonenumber.bind(this)} />
+            <p style={{marginLeft: '10px'}}> Phonenumber: <input type="number" onChange={this.handlePhonenumber.bind(this)} /></p>
           </label> <br />
 
-
-
-          <button onClick={this.handleSubmit.bind(this)}> Submit </button>
+          <Button bsStyle="success" style={{marginLeft: '12%'}} onClick={this.handleSubmit.bind(this)}> Submit </Button>
         </form>
       </div>
     )
@@ -158,9 +150,3 @@ class Sign extends React.Component {
 }
 
 export default Sign;
-
-
-
-// <form action='/api/images' method="post" encType="multipart/form-data">
-//   <input type='file' name='image' />
-// </form>

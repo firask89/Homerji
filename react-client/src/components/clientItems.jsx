@@ -22,26 +22,27 @@ class Clientitems extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: false,
+      show: false, //for the modal
+      //these are for the location
       lat: this.props.items.latitude,
       long: this.props.items.longtitude
     };
   }
 
+  //modal functions
   handleShow() {
     this.setState({ 
       show: true 
     });
   }
-
   handleClose() {
     this.setState({ 
       show: false 
     });
   }
 
+  //remove client
   handleTrash() {
-    console.log(this.props.items)
     $.ajax({
       type: 'POST',
       url: '/clientedit',
@@ -50,7 +51,7 @@ class Clientitems extends React.Component {
         id: this.props.items._id
       },
       success: (data) => {
-        
+        alert("removed successfully")
       },
       error: (err) => {
         alert('err')
@@ -60,7 +61,7 @@ class Clientitems extends React.Component {
 
   render() {
     return (
-      <div className='thumbnail' style={{borderSize: "5px", position: 'relative'}}>
+      <div className='col-md-4 col-md-4 thumbnail' style={{marginRight:"5px", borderSize: "5px", position: 'relative'}}>
         Client Name: {this.props.items.name} <Button  bsStyle="danger" className='glyphicon glyphicon-trash' onClick={this.handleTrash.bind(this)} style={{position: 'absolute', top: '3px', right: '3px'}}> 
         </Button>
         <br /><br />
@@ -70,7 +71,6 @@ class Clientitems extends React.Component {
           Client location
         </Button>
         
-
         <Modal show={this.state.show} onHide={this.handleClose.bind(this)}>
           <Modal.Body style={{textAlign:'left', marginLeft: '10px'}}>
             <h5> Client location </h5>

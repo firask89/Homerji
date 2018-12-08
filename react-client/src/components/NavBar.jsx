@@ -4,72 +4,81 @@ import SearchByName from "./workers.jsx";
 import axios from "axios";
 import $ from "jquery";
 import {
-  Navbar,
-  Nav,
-  NavItem,
-  FormGroup,
-  FormControl,
-  Button
+ Navbar,
+ Nav,
+ NavItem,
+ FormGroup,
+ FormControl,
+ Button
 } from "react-bootstrap"; // For Designing
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import ContactUs from "./contactUs.jsx";
+import About from "./About.jsx";
+
 
 
 class NavBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "", //search bar
-      workers: [] //searched workers
-    };
-  }
+ constructor(props) {
+   super(props);
+   this.state = {
+     name: "", //search bar
+     workers: [] //searched workers
+   };
+ }
 
-  // For the search
-  getWorkersByName() {
-    var that = this;
-    axios.post("/name", { name: this.state.name }).then(function (res) {
-      that.setState({
-        workers: res.data
-      });
-      $('#textInbox').val('') //to empty the input box
-      $('.home').hide() //categories buttons on index file
-    });
-  }
+ // For the search
+ getWorkersByName() {
+   var that = this;
+   axios.post("/name", { name: this.state.name }).then(function (res) {
+     that.setState({
+       workers: res.data
+     });
+     $('#textInbox').val('') //to empty the input box
+     $('#logos').hide() //categories buttons on index file
+   });
+ }
 
+  //get the value of the search bar
   getUserName(e) {
     this.setState({
       name: e.target.value //search bar value
     });
   }
 
+  hideCategories() {
+    console.log('here')
+    $('#logos').hide() //categories buttons on index file
+  }
+  
   render() {
-    return <Router>
-      <div>
-        <Navbar id="nav" collapseOnSelect>
-          <img style={{ marginLeft: '-7%', position: 'absolute' }} src="https://cdn0.iconfinder.com/data/icons/activities-flat-colorful/2048/2135_-_Engineer-512.png" id="back" />
-          <Navbar.Header>
-            <Navbar.Brand>
-              <a href="/">HomerG</a>
-            </Navbar.Brand>
-          </Navbar.Header>
-          <Navbar.Collapse>
-            <Nav>
-              <NavItem eventKey={1} href="/contact">
-                <div onClick={this.props.logos}>
-                  {" "}
+    return (
+      <Router>
+        <div>
+          <Navbar inverse collapseOnSelect>
+            <Navbar.Header>
+              <Navbar.Brand>
+                <a href="/" >HomerG</a>
+              </Navbar.Brand>
+            </Navbar.Header>
+            <Navbar.Collapse>
+              <Nav>
+                <NavItem eventKey={1} href="/contact">
                   Contact Us
-                {" "}
-                </div>
-              </NavItem>
-              <NavItem onClick={this.props.logos} eventKey={2} href="/about">
-                About
-              </NavItem>
-            </Nav>
+                </NavItem>
+                <NavItem eventKey={2} href="/about">
+                  About
+                </NavItem>
+              </Nav>
             <Navbar.Form pullLeft>
               <FormGroup>
-                <FormControl id="textInbox" type="text" placeholder="Worker name" onChange={this.getUserName.bind(this)} />
+                <FormControl onKeyUp={function(event) {
+                  event.preventDefault();
+                  if (event.keyCode === 13) {
+                  $("#myBtn").click();
+                  }
+                  }} id="textInbox" type="text" placeholder="Worker name" onChange={this.getUserName.bind(this)} />
               </FormGroup> <Link to="/search">
-                <Button onClick={this.getWorkersByName.bind(this)}>
+                <Button  id="myBtn" onClick={this.getWorkersByName.bind(this)}>
                   Search
                   </Button>
               </Link>
@@ -90,9 +99,10 @@ class NavBar extends React.Component {
           path="/search"
           component={() => <SearchByName workersList={this.state.workers} />}
         />
-        <Route path="/contact" component={ContactUs} />
+        <Route path="/contact" component={ContactUs}/>
+        <Route path="/about" component={About}/>
       </div>
-    </Router>;
+    </Router>)
   }
 }
 
